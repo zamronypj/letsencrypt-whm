@@ -14,13 +14,21 @@
 if [[ -z "${CERTBOT_EXEC}" ]]; then
     CERTBOT_BIN="certbot-auto"
 else
-  CERTBOT_BIN="${CERTBOT_EXEC}"
+    CERTBOT_BIN="${CERTBOT_EXEC}"
+fi
+
+if [[ -z "${DRY_INSTALL}" ]]; then
+    DRY_RUN=0
+else
+    DRY_RUN=1
 fi
 
 WORKING_DIR=$1
 DOMAIN_NAME=$2
 
-$CERTBOT_BIN --webroot -w $WORKING_DIR -d $DOMAIN_NAME certonly
+if [ $DRY_RUN == 0 ]; then
+    $CERTBOT_BIN --webroot -w $WORKING_DIR -d $DOMAIN_NAME certonly
+fi 
 
 LETSENCRYPT_CERT_DIR=/etc/letsencrypt/live/$DOMAIN_NAME
 CERT_FILE=$LETSENCRYPT_CERT_DIR/cert.pem
@@ -38,13 +46,15 @@ install_cert() {
     URLENCODE_PRIVKEY=$(cat $PRIV_KEY_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
 
     # install new certificate
-    whmapi1 installssl \
-            domain=$DOMAIN_NAME \
-            crt=$URLENCODE_CERT \
-            key=$URLENCODE_PRIVKEY \
-            cab=$URLENCODE_CA \
-            enable_sni_for_mail=1
-    
+    if [ $DRY_RUN == 0 ]; then
+        whmapi1 installssl \
+                domain=$DOMAIN_NAME \
+                crt=$URLENCODE_CERT \
+                key=$URLENCODE_PRIVKEY \
+                cab=$URLENCODE_CA \
+                enable_sni_for_mail=1
+    fi
+
     #update md5 file with new md5 checksum value
     md5sum "$CERT_FILE" > $CERT_MD5_FILE
 }
@@ -75,5 +85,7 @@ else
         #hash value is changed so install new ssl certificate
         echo "Different MD5 checksum. Install SSL certificate"
         install_cert
+    else 
+        echo "Nothing to install"
     fi
 fi
