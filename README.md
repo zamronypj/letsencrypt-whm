@@ -6,7 +6,7 @@ into WHM-based Linux server.
 # Motivation
 
 Latest WHM adds [Let's Encrypt](https://letsencrypt.org/) SSL certificate plugin,
-however CPanel dropped support for Centos 6 32-bit system.
+however [CPanel](https://cpanel.com/) dropped support for Centos 6 32-bit system.
 
 This is for WHM user who stuck on WHM version < 58 but want to use
 Let's Encrypt SSL certificates automated domain validation tools.
