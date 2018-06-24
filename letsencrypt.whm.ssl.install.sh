@@ -66,12 +66,14 @@ fi
 
 if [ ! -f "$CERT_MD5_FILE" ]; then
     #no md5 file, so just install ssl certificate
+    echo "No MD5 checksum. Install SSL certificate"
     install_cert
 else 
     ORIGINAL_HASH_VALUE=$(cat "$CERT_MD5_FILE")
     HASH_VALUE=$(md5sum "$CERT_FILE")
     if [ "$ORIGINAL_HASH_VALUE" != "$HASH_VALUE" ]; then
         #hash value is changed so install new ssl certificate
+        echo "Different MD5 checksum. Install SSL certificate"
         install_cert
     fi
 fi
