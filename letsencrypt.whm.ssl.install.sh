@@ -27,13 +27,51 @@ CERT_FILE=$LETSENCRYPT_CERT_DIR/cert.pem
 CA_FILE=$LETSENCRYPT_CERT_DIR/chain.pem
 PRIV_KEY_FILE=$LETSENCRYPT_CERT_DIR/privkey.pem
 
-URLENCODE_CA=$(cat $CA_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
-URLENCODE_CERT=$(cat $CERT_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
-URLENCODE_PRIVKEY=$(cat $PRIV_KEY_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
+BASE_CERT_MD5_DIR=/etc/letsencrypt-whm
+BASE_CERT_MD5_DOMAIN_DIR=$BASE_CERT_MD5_DIR/$DOMAIN_NAME
+CERT_MD5_DIR=$BASE_CERT_MD5_DOMAIN_DIR/md5
+CERT_MD5_FILE=$CERT_MD5_DIR/cert
 
-whmapi1 installssl \
-        domain=$DOMAIN_NAME \
-        crt=$URLENCODE_CERT \
-        key=$URLENCODE_PRIVKEY \
-        cab=$URLENCODE_CA \
-        enable_sni_for_mail=1
+install_cert() {
+    URLENCODE_CA=$(cat $CA_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
+    URLENCODE_CERT=$(cat $CERT_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
+    URLENCODE_PRIVKEY=$(cat $PRIV_KEY_FILE | php -r "echo urlencode(file_get_contents('php://stdin'));")
+
+    # install new certificate
+    whmapi1 installssl \
+            domain=$DOMAIN_NAME \
+            crt=$URLENCODE_CERT \
+            key=$URLENCODE_PRIVKEY \
+            cab=$URLENCODE_CA \
+            enable_sni_for_mail=1
+    
+    #update md5 file with new md5 checksum value
+    md5sum "$CERT_FILE" > $CERT_MD5_FILE
+}
+
+if [ ! -d "$BASE_CERT_MD5_DIR" ]; then
+    #dir not exists, create one
+    mkdir "$BASE_CERT_MD5_DIR"
+fi
+
+if [ ! -d "$BASE_CERT_MD5_DOMAIN_DIR" ]; then
+    #dir not exists, create one
+    mkdir "$BASE_CERT_MD5_DOMAIN_DIR"
+fi
+
+if [ ! -d "$CERT_MD5_DIR" ]; then
+    #dir not exists, create one
+    mkdir "$CERT_MD5_DIR"
+fi
+
+if [ ! -f "$CERT_MD5_FILE" ]; then
+    #no md5 file, so just install ssl certificate
+    install_cert
+else 
+    ORIGINAL_HASH_VALUE=$(cat "$CERT_MD5_FILE")
+    HASH_VALUE=$(md5sum "$CERT_FILE")
+    if [ "$ORIGINAL_HASH_VALUE" != "$HASH_VALUE" ]; then
+        #hash value is changed so install new ssl certificate
+        install_cert
+    fi
+fi

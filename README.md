@@ -32,4 +32,8 @@ to generate certificate.
 
     # ./letsencrypt.whm.ssl.install.sh /home/userxxx/public_html example.com
 
+If you install `certbot-auto` in directory that is not in `PATH` environment variable then you can specify absolute path using `CERTBOT_EXEC` variable. For example
+
+    #  CERTBOT_EXEC=/usr/local/certbot/certbot-auto ./letsencrypt.whm.ssl.install.sh /home/userxxx/public_html example.com
+
 Zamrony P. Juhara
