@@ -15,7 +15,7 @@ Let's Encrypt SSL certificates automated domain validation tools.
 
 - SSH access to WHM-based server with administrative privilege.
 - `certbot-auto` [Installation Guide](https://certbot.eff.org/docs/install.html)
-- [PHP](https://php)
+- [PHP](https://php.net)
 - `git`
 
 # Installation
