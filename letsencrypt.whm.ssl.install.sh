@@ -28,7 +28,7 @@ DOMAIN_NAME=$2
 
 if [ $DRY_RUN == 0 ]; then
     $CERTBOT_BIN --webroot -w $WORKING_DIR -d $DOMAIN_NAME certonly
-fi 
+fi
 
 LETSENCRYPT_CERT_DIR=/etc/letsencrypt/live/$DOMAIN_NAME
 CERT_FILE=$LETSENCRYPT_CERT_DIR/cert.pem
@@ -47,12 +47,14 @@ install_cert() {
 
     # install new certificate
     if [ $DRY_RUN == 0 ]; then
-        whmapi1 installssl \
+        whm_output=$(whmapi1 installssl \
+                --output=json \
                 domain=$DOMAIN_NAME \
                 crt=$URLENCODE_CERT \
                 key=$URLENCODE_PRIVKEY \
                 cab=$URLENCODE_CA \
-                enable_sni_for_mail=1
+                enable_sni_for_mail=1)
+        echo $whm_output | php -r "echo json_decode(file_get_contents('php://stdin'))->statusmsg;"
     fi
 
     #update md5 file with new md5 checksum value
@@ -78,14 +80,14 @@ if [ ! -f "$CERT_MD5_FILE" ]; then
     #no md5 file, so just install ssl certificate
     echo "No MD5 checksum. Install SSL certificate"
     install_cert
-else 
+else
     ORIGINAL_HASH_VALUE=$(cat "$CERT_MD5_FILE")
     HASH_VALUE=$(md5sum "$CERT_FILE")
     if [ "$ORIGINAL_HASH_VALUE" != "$HASH_VALUE" ]; then
         #hash value is changed so install new ssl certificate
         echo "Different MD5 checksum. Install SSL certificate"
         install_cert
-    else 
+    else
         echo "Nothing to install"
     fi
 fi

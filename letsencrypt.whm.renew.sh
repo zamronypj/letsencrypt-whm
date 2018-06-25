@@ -61,12 +61,15 @@ install_cert() {
     if [ "$ORIGINAL_HASH_VALUE" != "$HASH_VALUE" ]; then
         echo "Install certificate for $domain_name"
         # install certificate
-        whmapi1 installssl \
+        whm_output=$(whmapi1 installssl \
+                --output=json \
                 domain=$DOMAIN_NAME \
                 crt=$URLENCODE_CERT \
                 key=$URLENCODE_PRIVKEY \
                 cab=$URLENCODE_CA \
-                enable_sni_for_mail=1
+                enable_sni_for_mail=1)
+
+        echo $whm_output | php -r "echo json_decode(file_get_contents('php://stdin'))->statusmsg;"
 
         #update md5 file with new md5 checksum value
         echo "$HASH_VALUE" > $CERT_MD5_FILE
