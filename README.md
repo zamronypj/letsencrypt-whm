@@ -17,6 +17,7 @@ Let's Encrypt SSL certificates automated domain validation tools.
 - `certbot-auto` [Installation Guide](https://certbot.eff.org/docs/install.html)
 - [PHP](https://php.net)
 - `git`
+- [WHM API 1 Install Ssl](https://documentation.cpanel.net/display/DD/WHM+API+1+Functions+-+installssl)
 
 # Installation
 
