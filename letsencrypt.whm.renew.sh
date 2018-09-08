@@ -88,6 +88,6 @@ for f in "$BASE_LETSENCRYPT_CERT_DIR"/*; do
     if [[ -d "$f" && ! -L "$f" ]]; then
         domain_name=$(basename "$f")
         # domain_name is a directory and it is domain name
-            install_cert $domain_name
+        install_cert $domain_name
     fi
 done
