@@ -54,7 +54,7 @@ install_cert() {
                 key=$URLENCODE_PRIVKEY \
                 cab=$URLENCODE_CA \
                 enable_sni_for_mail=1)
-        echo $whm_output | php -r "echo json_decode(file_get_contents('php://stdin'))->statusmsg;"
+        echo $whm_output | php -r "echo json_decode(file_get_contents('php://stdin'))->result[0]->statusmsg;"
     fi
 
     #update md5 file with new md5 checksum value
