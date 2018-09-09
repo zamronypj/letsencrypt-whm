@@ -47,4 +47,21 @@ If you install `certbot-auto` in directory that is not in `PATH` environment var
 
     #  CERTBOT_EXEC=/usr/local/certbot/certbot-auto ./letsencrypt.whm.renew.sh
 
+`letsencrypt.wh.renew.sh` is script that you need to run periodically with cron
+to avoid issue with expired SSL certificates. This script calls `certbot-auto renew`
+command. It is save to call this periodically as explained [here](
+https://certbot.eff.org/docs/using.html#renewing-certificates).
+
+> Unlike certonly, renew acts on multiple certificates and always takes into account whether each one is near expiry. Because of this, renew is suitable (and designed) for automated use, to allow your system to automatically renew each certificate when appropriate. Since renew only renews certificates that are near expiry it can be run as frequently as you want - since it will usually take no action.
+
+## Install SSL Certificate manually
+
+If you already have Lets Encrypt SSL certificate generated, you can manually
+install the certificate without generating new certificate.
+
+`whm.install.cert.sh` installs existing Lets Encrypt SSL certificate for a domain name.
+
+    # ./whm.install.cert.sh [domain name]
+
+
 Zamrony P. Juhara
