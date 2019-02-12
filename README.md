@@ -45,11 +45,15 @@ If you install `certbot-auto` in directory that is not in `PATH` environment var
 
 If you install `certbot-auto` in directory that is not in `PATH` environment variable then you can specify absolute path using `CERTBOT_EXEC` variable. 
 
-    # CERTBOT_EXEC=/path/to/certbot-auto ./letsencrypt.whm.renew.sh
+```
+# CERTBOT_EXEC=/path/to/certbot-auto ./letsencrypt.whm.renew.sh
+```
 
 For example
 
-    # CERTBOT_EXEC=/usr/local/letsencrypt/certbot-auto ./letsencrypt.whm.renew.sh
+```
+# CERTBOT_EXEC=/usr/local/letsencrypt/certbot-auto ./letsencrypt.whm.renew.sh
+```
 
 `letsencrypt.wh.renew.sh` is script that you need to run periodically with cron
 to avoid issue with expired SSL certificates. This script calls `certbot-auto renew`
