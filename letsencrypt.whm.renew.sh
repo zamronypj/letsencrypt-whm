@@ -6,7 +6,7 @@
 #
 # Example usage:
 #
-# ./letsencrypt.whm.renew.sh
+# ./letsencrypt.whm.renew.sh [optional parameter to pass to certbot-auto]
 #
 # @author Zamrony P. Juhara <zamronypj@yahoo.com>
 #------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ install_cert() {
     fi
 }
 
-
-$CERTBOT_BIN renew
+# pass any optional arguments to certbot if any
+$CERTBOT_BIN renew "$@"
 
 for f in "$BASE_LETSENCRYPT_CERT_DIR"/*; do
     if [[ -d "$f" && ! -L "$f" ]]; then
